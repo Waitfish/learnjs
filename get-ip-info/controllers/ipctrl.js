@@ -12,13 +12,14 @@ var request = require('request');
  * @param res
  */
 function get_local_by_ip(req, res) {
-
-
     ip_local.findOne({ip: req.query.ip}, function (err, ipfind) {
             /**
              * 先从自己的数据库查询
              */
             if (err) throw err;
+
+            //console.log(err);
+
             if (ipfind) {
                 res.json(ipfind)
             } else {
@@ -34,9 +35,12 @@ function get_local_by_ip(req, res) {
                         if (!error && response.statusCode == 200) {
                             if (info.code === 0) {
                                 res.json(info.data)
+                                var new_ip = new ip_local(info.data);
+                                new_ip.save()
+                            }else{
+                                res.send("接口调用失败，请检查接口文档。")
                             }
-                            var new_ip = new ip_local(info.data);
-                            new_ip.save()
+
 
                         }
                     }
@@ -46,6 +50,8 @@ function get_local_by_ip(req, res) {
 
         }
     )
+
+
 }
 
 
